@@ -38,6 +38,7 @@ const Homepage = () => {
         setLoadingLogout(true);
         try {
             await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/google/logout`, { withCredentials: true });
+            localStorage.removeItem('jwt');
             setIsLoggedIn(false);
             navigate('/'); 
         } catch (error) {
