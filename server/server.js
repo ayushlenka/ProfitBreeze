@@ -8,11 +8,13 @@ const cookieParser = require('cookie-parser');
 const passport = require('passport');
 require('./Authentication/passport');
 
-// For production rate limiting(ip trusting)
-app.set('trust proxy', 1);
+
 
 // Express application
 const app = express();
+
+// For production rate limiting(ip trusting)
+app.set('trust proxy', 1);
 
 // App Port
 const port = process.env.PORT || 5000;

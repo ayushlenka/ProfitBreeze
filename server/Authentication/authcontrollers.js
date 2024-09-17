@@ -13,7 +13,7 @@ const googleAuthCallback = async (req, res) => {
   try {
     const token = req.user.token;
     res.cookie('jwt', token, { httpOnly: true, secure: false }); //Cookies
-    res.redirect('http://localhost:3000/'); // Redirect back to homepage
+    res.redirect('https://profitbreeze.netlify.app/'); // Redirect back to homepage
   } catch (error) {
     res.status(500).json({ error: 'An error occurred during authentication' });
   }
