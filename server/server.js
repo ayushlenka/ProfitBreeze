@@ -15,7 +15,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(cors({
-    origin: 'https://profitbreeze.netlify.app/',  
+    origin: 'https://profitbreeze.netlify.app',  
     methods: ['GET', 'POST', 'PUT', 'DELETE'], 
     credentials: true               
 }));
