@@ -21,7 +21,7 @@ const googleAuthCallback = async (req, res) => {
 
 // Google OAuth Logout
 const googleLogout = (req, res) => {
-    res.clearCookie('jwt'); // Clear the JWT cookie
+    res.clearCookie('jwt', { path: '/', domain: 'https://profitbreeze.onrender.com', httpOnly: true, secure: true });
     if (req.session) {
         req.session.destroy(err => {
             if (err) return res.status(500).send('Logout failed');
