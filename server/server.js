@@ -38,6 +38,12 @@ app.use(passport.initialize());
 
 app.use('/api', routes);
 
+app.use('/api/auth/verifytoken', (req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
+
 //MongoDB Connection first, then connects to node server
 mongoose.connect(process.env.ATLAS_URI)
   .then(() => {
