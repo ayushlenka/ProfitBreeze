@@ -30,6 +30,7 @@ app.use(cookieParser()); // Cookies
 
 app.use((req, res, next) => {
   console.log(req.path, req.method);
+  res.set('Cache-Control', 'no-store');
   next();
 })
 

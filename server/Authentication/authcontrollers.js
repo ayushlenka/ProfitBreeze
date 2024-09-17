@@ -15,9 +15,9 @@ const googleAuthCallback = async (req, res) => {
     res.cookie('jwt', token, { 
       httpOnly: true, 
       secure: process.env.NODE_ENV === 'production', 
-      sameSite: 'None',
+      sameSite: 'None', // Required for cross-site cookies
       path: '/', 
-      domain: 'profitbreeze.netlify.app'
+      domain: '.profitbreeze.netlify.app' // Use top-level domain with a leading dot
     });
     res.redirect('https://profitbreeze.netlify.app/'); // Redirect back to homepage
   } catch (error) {
@@ -25,27 +25,27 @@ const googleAuthCallback = async (req, res) => {
   }
 };
 
-
 // Google OAuth Logout
 const googleLogout = (req, res) => {
-  // Clear the JWT cookie
-  res.clearCookie('jwt', { 
-    path: '/', 
-    domain: 'profitbreeze.netlify.app',
-    httpOnly: true, 
-    secure: process.env.NODE_ENV === 'production', 
-    sameSite: 'None'
-  });
+    // Clear the JWT cookie
+    res.clearCookie('jwt', { 
+      path: '/', 
+      domain: '.profitbreeze.netlify.app', // Should match the domain set during login
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'None' // Should match the SameSite policy used during login
+    });
 
-  if (req.session) {
-      req.session.destroy(err => {
-          if (err) return res.status(500).send('Logout failed');
-          res.status(200).send('Logout successful');
-      });
-  } else {
-      res.status(200).send('Logout successful');
-  }
+    if (req.session) {
+        req.session.destroy(err => {
+            if (err) return res.status(500).send('Logout failed');
+            res.status(200).send('Logout successful');
+        });
+    } else {
+        res.status(200).send('Logout successful');
+    }
 };
+
 
 
 // JWT Authentication
