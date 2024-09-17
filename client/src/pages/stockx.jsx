@@ -29,7 +29,7 @@ const StockX = () => {
         };
 
         // StockX Calculate POST API
-        axios.post('http://localhost:5000/api/calculators/calculate/stockX', data)
+        axios.post(`${process.env.REACT_APP_API_URL}/api/calculators/calculate/StockX`, data)
             .then(response => {
                 setProfitData(response.data);
                 setErrorMessage(''); 
@@ -51,11 +51,14 @@ const StockX = () => {
         stockXSellerRating: 'Select your level',
     });
 
+    const [sellerLevel, setSellerLevel] = useState(settings.stockXSellerRating);
+    const [location, setLocation] = useState(settings.sellingLocation);
+
     // Fetch user settings when the component loads
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/settings/get', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/get`, {
                     withCredentials: true,
                 });
                 if (response.data) {
@@ -63,6 +66,8 @@ const StockX = () => {
                         sellingLocation: response.data.sellingLocation || 'Select your location',
                         stockXSellerRating: response.data.stockXSellerRating || 'Select your level',
                     });
+                    setSellerLevel(response.data.stockXSellerRating || 'Select your level');
+                    setLocation(response.data.sellingLocation || 'Select your location');
                 }
             } catch (error) {
                 console.error('Error fetching user settings:', error);
@@ -70,6 +75,15 @@ const StockX = () => {
         };
         fetchSettings();
     }, []);
+
+    const handleSellerLevelChange = (event) => {
+        setSellerLevel(event.target.value);
+    };
+
+    // Handle change for location
+    const handleLocationChange = (event) => {
+        setLocation(event.target.value);
+    };
 
     return (
         <div className="bg-offwhite min-h-screen">
@@ -90,7 +104,7 @@ const StockX = () => {
                         </div>
                         <div>
                             <label htmlFor="sellerLevel" className="block text-darkcharcoal font-semibold">Seller Level</label>
-                            <select id="sellerLevel" value={settings.stockXSellerRating} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
+                            <select id="sellerLevel" value={sellerLevel} onChange={handleSellerLevelChange} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
                                 {[1, 2, 3, 4, 5].map(level => (
                                     <option key={level} value={level}>{level}</option>
                                 ))}
@@ -98,7 +112,7 @@ const StockX = () => {
                         </div>
                         <div>
                             <label htmlFor="location" className="block text-darkcharcoal font-semibold">Location</label>
-                            <select id="location" value={settings.sellingLocation} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
+                            <select id="location" value={location} onChange={handleLocationChange} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
                                 {countries.map(country => (
                                     <option key={country} value={country}>{country}</option>
                                 ))}

@@ -17,7 +17,7 @@ const Settings = () => {
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/settings/get', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/get`, {
                     withCredentials: true,
                 });
                 console.log('Fetched settings:', response.data);
@@ -39,7 +39,7 @@ const Settings = () => {
 
     const updateSettings = async () => {
         try {
-            const response = await axios.put('http://localhost:5000/api/settings/update', settings, {
+            const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/settings/update`, settings, {
                 withCredentials: true,
             });
             console.log('Updated settings:', response.data);

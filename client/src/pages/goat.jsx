@@ -29,7 +29,7 @@ const GOAT = () => {
         };
 
         // GOAT Calculate POST API
-        axios.post('http://localhost:5000/api/calculators/calculate/GOAT', data)
+        axios.post(`${process.env.REACT_APP_API_URL}/api/calculators/calculate/GOAT`, data)
             .then(response => {
                 setProfitData(response.data);
                 setErrorMessage('');
@@ -51,11 +51,14 @@ const GOAT = () => {
         goatSellerLevel: 'Select your level',
     });
 
+    const [sellerRating, setSellerRating] = useState(settings.goatSellerLevel);
+    const [location, setLocation] = useState(settings.sellingLocation);
+
     // Fetch user settings when the component loads
     useEffect(() => {
         const fetchSettings = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/settings/get', {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/get`, {
                     withCredentials: true,
                 });
                 if (response.data) {
@@ -63,6 +66,8 @@ const GOAT = () => {
                         sellingLocation: response.data.sellingLocation || 'Select your location',
                         goatSellerLevel: response.data.goatSellerLevel || 'Select your level',
                     });
+                    setSellerRating(response.data.goatSellerLevel || 'Select your level');
+                    setLocation(response.data.sellingLocation || 'Select your location');
                 }
             } catch (error) {
                 console.error('Error fetching user settings:', error);
@@ -70,6 +75,15 @@ const GOAT = () => {
         };
         fetchSettings();
     }, []);
+
+    const handleSellerRatingChange = (event) => {
+        setSellerRating(event.target.value);
+    };
+
+    // Handle change for location
+    const handleLocationChange = (event) => {
+        setLocation(event.target.value);
+    };
 
     return (
         <div className="bg-offwhite min-h-screen">
@@ -90,7 +104,7 @@ const GOAT = () => {
                         </div>
                         <div>
                             <label htmlFor="sellerRating" className="block font-semibold">Seller Rating</label>
-                            <select id="sellerRating" value={settings.goatSellerLevel} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
+                            <select id="sellerRating" value={sellerRating} onChange={handleSellerRatingChange} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
                                 {["90 or above", "Between 70-89","Between 50-69", "Below 50"].map(level => (
                                     <option key={level} value={level}>{level}</option>
                                 ))}
@@ -98,7 +112,7 @@ const GOAT = () => {
                         </div>
                         <div>
                             <label htmlFor="location" className="block font-semibold">Location</label>
-                            <select id="location" value={settings.sellingLocation} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
+                            <select id="location" value={location} onChange={handleLocationChange} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
                                 {countries.map(country => (
                                     <option key={country} value={country}>{country}</option>
                                 ))}

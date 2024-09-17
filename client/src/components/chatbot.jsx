@@ -7,7 +7,7 @@ const Chatbot = () => {
   const { messages, setMessages } = useContext(ChatbotContext);
   const [chatOpen, setChatOpen] = useState(false);
   const [userInput, setUserInput] = useState('');
-
+  
   const toggleChat = () => {
     setChatOpen(!chatOpen);
   };
@@ -20,7 +20,7 @@ const Chatbot = () => {
     setUserInput('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/chatbot', {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/chatbot`, {
         prompt: userInput,
       });
       const botReply = response.data.reply;

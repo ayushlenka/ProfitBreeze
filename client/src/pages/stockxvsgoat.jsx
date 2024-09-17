@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Taskbar from '../components/taskbar';
 import Chatbot from '../components/chatbot';
@@ -31,7 +31,7 @@ const StockXVsGOAT = () => {
         };
 
         // StovkXVsGOAT Calculate POST API
-        axios.post('http://localhost:5000/api/calculators/calculate/StockXVSGOAT', data)
+        axios.post(`${process.env.REACT_APP_API_URL}/api/calculators/calculate/StockXVSGOAT`, data)
             .then(response => {
                 setProfitData(response.data);
                 setErrorMessage(''); 
@@ -46,7 +46,56 @@ const StockXVsGOAT = () => {
                     setErrorMessage(error.response?.data || 'Something went wrong. Please try again.');
                 }
             });
-    };
+        };
+
+        const [settings, setSettings] = useState({
+            sellingLocation: 'Select your location',
+            stockXSellerRating: 'Select your level',
+            goatSellerLevel: 'Select your level'
+            
+        });  
+
+        const [sellerLevel, setSellerLevel] = useState(settings.stockXSellerRating);
+        const [sellerRating, setSellerRating] = useState(settings.goatSellerLevel);
+        const [location, setLocation] = useState(settings.sellingLocation);
+        
+        
+        // Fetch user settings when the component loads
+        useEffect(() => {
+            const fetchSettings = async () => {
+                try {
+                    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/settings/get`, {
+                        withCredentials: true,
+                    });
+                    if (response.data) {
+                        setSettings({
+                            sellingLocation: response.data.sellingLocation || 'Select your location',
+                            stockXSellerRating: response.data.stockXSellerRating || 'Select your level',
+                            goatSellerLevel: response.data.goatSellerLevel || 'Select your level',
+                        });
+                        setSellerLevel(response.data.stockXSellerRating || 'Select your level');
+                        setSellerRating(response.data.goatSellerLevel || 'Select your level');
+                        setLocation(response.data.sellingLocation || 'Select your location');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user settings:', error);
+                }
+            };
+            fetchSettings();
+        }, []);
+
+        const handleSellerLevelChange = (event) => {
+            setSellerLevel(event.target.value);
+        };
+
+        const handleSellerRatingChange = (event) => {
+            setSellerRating(event.target.value);
+        };
+    
+        // Handle change for location
+        const handleLocationChange = (event) => {
+            setLocation(event.target.value);
+        };
 
     return (
         <div className="bg-offwhite min-h-screen">
@@ -67,7 +116,7 @@ const StockXVsGOAT = () => {
                         </div>
                         <div>
                             <label htmlFor="sellerLevel" className="block font-semibold">StockX Seller Level</label>
-                            <select id="sellerLevel" className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
+                            <select id="sellerLevel" value={sellerLevel} onChange={handleSellerLevelChange} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
                                 {[1, 2, 3, 4, 5].map(level => (
                                     <option key={level} value={level}>{level}</option>
                                 ))}
@@ -75,7 +124,7 @@ const StockXVsGOAT = () => {
                         </div>
                         <div>
                             <label htmlFor="sellerRating" className="block font-semibold">GOAT Seller Rating</label>
-                            <select id="sellerRating" className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
+                            <select id="sellerRating" value={sellerRating} onChange={handleSellerRatingChange} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
                                 {["90 or above", "Between 70-89","Between 50-69", "Below 50"].map(level => (
                                     <option key={level} value={level}>{level}</option>
                                 ))}
@@ -83,7 +132,7 @@ const StockXVsGOAT = () => {
                         </div>
                         <div>
                             <label htmlFor="location" className="block font-semibold">Location</label>
-                            <select id="location" className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
+                            <select id="location" value={location} onChange={handleLocationChange} className="w-full px-3 py-2 border rounded-md focus:ring-cornflowerblue focus:border-cornflowerblue">
                                 {countries.map(country => (
                                     <option key={country} value={country}>{country}</option>
                                 ))}
