@@ -29,7 +29,7 @@ const StockX = () => {
         };
 
         // StockX Calculate POST API
-        axios.post(`${process.env.REACT_APP_API_URL}/api/calculators/calculate/StockX`, data)
+        axios.post("https://profitbreeze.onrender.com/api/calculators/calculate/StockX", data)
             .then(response => {
                 setProfitData(response.data);
                 setErrorMessage(''); 
