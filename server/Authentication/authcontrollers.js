@@ -12,25 +12,41 @@ const googleAuth = passport.authenticate('google', {
 const googleAuthCallback = async (req, res) => {
   try {
     const token = req.user.token;
-    res.cookie('jwt', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'None', path: '/'}); //Cookies
+    res.cookie('jwt', token, { 
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'None',
+      path: '/', 
+      domain: 'profitbreeze.netlify.app'
+    });
     res.redirect('https://profitbreeze.netlify.app/'); // Redirect back to homepage
   } catch (error) {
     res.status(500).json({ error: 'An error occurred during authentication' });
   }
 };
 
+
 // Google OAuth Logout
 const googleLogout = (req, res) => {
-    res.clearCookie('jwt', { path: '/', domain: 'https://profitbreeze.onrender.com', httpOnly: true, secure: true });
-    if (req.session) {
-        req.session.destroy(err => {
-            if (err) return res.status(500).send('Logout failed');
-            res.status(200).send('Logout successful');
-        });
-    } else {
-        res.status(200).send('Logout successful');
-    }
+  // Clear the JWT cookie
+  res.clearCookie('jwt', { 
+    path: '/', 
+    domain: 'profitbreeze.netlify.app',
+    httpOnly: true, 
+    secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'None'
+  });
+
+  if (req.session) {
+      req.session.destroy(err => {
+          if (err) return res.status(500).send('Logout failed');
+          res.status(200).send('Logout successful');
+      });
+  } else {
+      res.status(200).send('Logout successful');
+  }
 };
+
 
 // JWT Authentication
 const authenticateJWT = (req, res, next) => {
