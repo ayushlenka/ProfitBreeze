@@ -8,43 +8,28 @@ const googleAuth = passport.authenticate('google', {
     prompt: 'select_account'  
   });
 
-// Google OAuth callback handling
-const googleAuthCallback = async (req, res) => {
-  try {
-    const token = req.user.token;
-    res.cookie('jwt', token, { 
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === 'production', 
-      sameSite: 'None', // Required for cross-site cookies
-      path: '/', 
-      domain: '.profitbreeze.netlify.app' // Use top-level domain with a leading dot
-    });
-    res.redirect('https://profitbreeze.netlify.app/'); // Redirect back to homepage
-  } catch (error) {
-    res.status(500).json({ error: 'An error occurred during authentication' });
-  }
-};
-
-// Google OAuth Logout
-const googleLogout = (req, res) => {
-    // Clear the JWT cookie
-    res.clearCookie('jwt', { 
-      path: '/', 
-      domain: '.profitbreeze.netlify.app', // Should match the domain set during login
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === 'production', 
-      sameSite: 'None' // Should match the SameSite policy used during login
-    });
-
-    if (req.session) {
-        req.session.destroy(err => {
-            if (err) return res.status(500).send('Logout failed');
-            res.status(200).send('Logout successful');
-        });
-    } else {
-        res.status(200).send('Logout successful');
+  const googleAuthCallback = async (req, res) => {
+    try {
+      const token = req.user.token;
+      res.cookie('jwt', token, { httpOnly: true, secure: false }); //Cookies
+      res.redirect('http://profitbreeze.netlify.app'); // Redirect back to homepage
+    } catch (error) {
+      res.status(500).json({ error: 'An error occurred during authentication' });
     }
-};
+  };
+  
+  // Google OAuth Logout
+  const googleLogout = (req, res) => {
+      res.clearCookie('jwt'); // Clear the JWT cookie
+      if (req.session) {
+          req.session.destroy(err => {
+              if (err) return res.status(500).send('Logout failed');
+              res.status(200).send('Logout successful');
+          });
+      } else {
+          res.status(200).send('Logout successful');
+      }
+  };
 
 
 
