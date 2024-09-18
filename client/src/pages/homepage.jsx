@@ -20,16 +20,20 @@ const Homepage = () => {
     const checkAuth = async () => {
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/verifytoken`, {}, { withCredentials: true });
+            console.log('Token verification response:', response.data);
             if (response.data.valid) {
                 setIsLoggedIn(true);
+            } else {
+                setIsLoggedIn(false);
             }
         } catch (error) {
+            console.error('Error verifying token:', error);
             setIsLoggedIn(false);
         } finally {
             setLoading(false); 
         }
     };
-
+    
     useEffect(() => {
         checkAuth(); 
     }, []);
